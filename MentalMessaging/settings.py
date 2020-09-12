@@ -70,6 +70,7 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = "MentalMessaging.routing.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 WSGI_APPLICATION = "MentalMessaging.wsgi.application"
 
