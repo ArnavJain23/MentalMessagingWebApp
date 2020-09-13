@@ -46,5 +46,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }
         response = requests.post(url=url, data=json.dumps(data_dict))
         response_dict = json.loads(response.content)
-        print(response_dict["attributeScores"]["TOXICITY"]["summaryScore"]["value"])
-        self.send(text_data=json.dumps({"message": message, "user": user}))
+        toxicity = response_dict["attributeScores"]["TOXICITY"]["summaryScore"]["value"]
+        await self.send(
+            text_data=json.dumps(
+                {"message": message, "user": user, "toxicity": toxicity}
+            )
+        )
