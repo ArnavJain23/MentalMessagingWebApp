@@ -1,5 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .models import ChatRoom, User, Message
+import requests
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -18,15 +20,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """Receive message from WebSocket and send to room."""
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
+        user = text_data_json["user"]
 
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name,
+            {"type": "chat_message", "message": message, "user": user},
         )
 
-    # Receive message from room group
     async def chat_message(self, event):
-        """Receive message from room."""
+        """Receive message from room and send to WebSocket."""
         message = event["message"]
-
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+        user = event["user"]
+        api_key = "AIzaSyBn2iHm0d7QM853HRKGvSX-IbvXGXeZmWw"
+        url = (
+            "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
+            + "?key="
+            + api_key
+        )
+        data_dict = {
+            "comment": {"text": message},
+            "languages": ["en"],
+            "requestedAttributes": {
+                "TOXICITY": {},
+            },
+        }
+        response = requests.post(url=url, data=json.dumps(data_dict))
+        response_dict = json.loads(response.content)
+        print(response_dict["attributeScores"]["TOXICITY"]["summaryScore"]["value"])
+        self.send(text_data=json.dumps({"message": message, "user": user}))

@@ -15,10 +15,10 @@
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
         const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`);
-
+        const userName = window.localStorage.getItem('userName')
         chatSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            document.querySelector('#chat-log').value += (data.user + ':\n' + data.message + '\n');
         };
 
         chatSocket.onclose = (e) => {
@@ -36,7 +36,8 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': message,
+                'user': userName
             }));
             messageInputDom.value = '';
         };
