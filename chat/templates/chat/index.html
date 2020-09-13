@@ -1,17 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html style="width:80%; margin:auto;">
 
 <head>
     <meta charset="utf-8" />
     <title>Chat Rooms</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 
 <body>
-    What chat room would you like to enter?
+    <style>
+        #room-name-submit:hover {
+            box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+            -webkit-transition-duration: 0.4s;
+            /* Safari */
+            transition-duration: 0.4s;
+        }
+    </style>
+    <h5>
+        What chat room would you like to enter?
+    </h5>
     <br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
-
+    <input id="room-name-input" type="text" size="100" placeholder="Room name"><br>
+    <input id="room-name-username" type="text" size="100" placeholder="Your username"><br>
+    <input id="room-name-submit" type="button" value="Enter"
+        style="border-radius:none;border:none;text-align:center;padding: 15px 32px;text-decoration:none;background-color:white;color:rgb(38, 166, 154);">
     <script>
         document.querySelector('#room-name-input').focus();
         document.querySelector('#room-name-input').onkeyup = (e) => {
@@ -22,7 +38,9 @@
 
         document.querySelector('#room-name-submit').onclick = (e) => {
             const roomName = document.querySelector('#room-name-input').value;
-            if (roomName) {
+            const userName = document.querySelector('#room-name-username').value;
+            if (roomName && userName) {
+                window.localStorage.setItem('userName', userName)
                 window.location.pathname = `/chat/${roomName}/`;
             }
         };
