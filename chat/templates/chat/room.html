@@ -28,18 +28,21 @@
     <input id="chat-message-input" type="text" size="100" placeholder="Enter message"><br>
     <input id="chat-message-submit" type="button" value="Send" style="border-radius:none;border:none;text-align:center;padding: 15px 32px;text-decoration:none;background-color:white;color:rgb(38, 166, 154);
 ">
-    {{ room_name|json_script:"room-name" }}
-    <script>
+    <h6 id="tree-text" style="display:none;">
+        Congrats, you just planted a seed for your mental health 🌱
+    </h6> {{ room_name|json_script:"room-name" }} <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
         const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`);
         const userName = window.localStorage.getItem('userName');
         const blocked_users = []
         chatSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            if (data.toxicity > 0.8 && data.user != userName) {
-                const block_user = confirm(`@${data.user} has sent a toxic message, would you like to block them?`)
+            if (data.toxicity > 0.8 && data.user != userName && !blocked_users.includes(data.user)) {
+                const block_user = confirm(
+                    `@${data.user} has sent a potentially toxic message, would you like to block them?`)
                 if (block_user) {
                     blocked_users.push(data.user);
+                    document.getElementById("tree-text").style.display = "block";
                     return;
                 }
             }
