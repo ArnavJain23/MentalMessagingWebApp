@@ -46,7 +46,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }
         response = requests.post(url=url, data=json.dumps(data_dict))
         response_dict = json.loads(response.content)
-        toxicity = response_dict["attributeScores"]["TOXICITY"]["summaryScore"]["value"]
+        try:
+            toxicity = response_dict["attributeScores"]["TOXICITY"]["summaryScore"][
+                "value"
+            ]
+        except KeyError:
+            print(response.status_code)
         await self.send(
             text_data=json.dumps(
                 {"message": message, "user": user, "toxicity": toxicity}
